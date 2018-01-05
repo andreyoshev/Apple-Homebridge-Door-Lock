@@ -1,16 +1,16 @@
 {
-    "name": "Homebridge – Door Lock",
-    "version": "3.2.1",
-    "description": "Homebridge – Door Lock",
+    "name": "homebridge-doorlock",
+    "version": "1.0.0",
+    "description": "Homebridge – HTTP Door Lock",
     "author": {
-        "name": "https://www.studiopieters.nl"
+        "name": "Jed Wood"
     },
     "keywords": [
         "homebridge-plugin"
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/AchimPieters/Apple-Homebridge-Door-Lock"
+        "url": "https://github.com/jedwood/Apple-Homebridge-Door-Lock"
     },
     "engines": {
         "node": ">=0.12.0",

@@ -41,6 +41,9 @@ function LockAccessory(log, config) {
         .getCharacteristic(Characteristic.StatusLowBattery)
         .on('get', this.getLowBatt.bind(this));
 
+
+    //start the 5 second check loop
+    this.checkState();
 }
 
 LockAccessory.prototype.getState = function(callback) {
@@ -63,6 +66,14 @@ LockAccessory.prototype.getState = function(callback) {
             callback(err);
         }
     }.bind(this));
+}
+
+LockAccessory.prototype.checkState = function() {
+    var that = this;
+    this.getState(function(err, state){
+        that.lockservice.setCharacteristic(Characteristic.LockCurrentState, state);
+        setTimeout(that.checkState.bind(that), 5000);
+    })
 }
 
 LockAccessory.prototype.getBattery = function(callback) {
@@ -142,7 +153,7 @@ LockAccessory.prototype.setState = function(state, callback) {
 
             var self = this;
             setTimeout(function() {
-                if (currentState == Characteristic.LockTargetState.UNSECURED) { 
+                if (currentState == Characteristic.LockTargetState.UNSECURED) {
                     self.lockservice
                         .setCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED);
                 }
