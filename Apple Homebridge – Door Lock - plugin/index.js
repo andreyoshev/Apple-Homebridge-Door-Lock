@@ -15,6 +15,7 @@ function LockAccessory(log, config) {
     this.lockID = config["lock-id"];
     this.username = config["username"];
     this.password = config["password"];
+    this.cachedLockState = false;
 
     this.lockservice = new Service.LockMechanism(this.name);
 
@@ -47,8 +48,6 @@ function LockAccessory(log, config) {
 }
 
 LockAccessory.prototype.getState = function(callback) {
-    this.log("Getting current state...");
-
     request.get({
         url: this.url,
         qs: { username: this.username, password: this.password, lockid: this.lockID }
@@ -69,10 +68,16 @@ LockAccessory.prototype.getState = function(callback) {
 }
 
 LockAccessory.prototype.checkState = function() {
-    var that = this;
+    var self = this;
     this.getState(function(err, state){
-        that.lockservice.setCharacteristic(Characteristic.LockCurrentState, state);
-        setTimeout(that.checkState.bind(that), 5000);
+        if (self.cachedLockState !== state) {
+            self.cachedLockState = state;
+            var currentState = (state == true) ? Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED
+            self.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
+            self.lockservice.setCharacteristic(Characteristic.LockTargetState, currentState);
+        }
+
+        setTimeout(self.checkState.bind(self), 8000);
     })
 }
 
@@ -117,16 +122,29 @@ LockAccessory.prototype.getLowBatt = function(callback) {
             callback(null, low); // success
         }
         else {
-            this.log("Error getting battery (status code %s): %s", response.statusCode, err);
+            var errCode = "NO RESPONSE"
+            if (response) errCode = response.statusCode
+            this.log("Error getting battery (status code %s): %s", errCode, err);
             callback(err);
         }
     }.bind(this));
 }
 
 LockAccessory.prototype.setState = function(state, callback) {
-    var lockState = (state == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked";
+
+    var lockState = (state == Characteristic.LockTargetState.SECURED) ? "lock" : "unlock";
 
     this.log("Set state to %s", lockState);
+
+    var currentState = (state == Characteristic.LockTargetState.SECURED) ?
+        Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
+
+    //this is a security latch that can't be unlocked programatically
+    if (lockState == "unlock") {
+        this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
+        callback(null); // success
+        return;
+    }
 
     request.post({
         url: this.url,
@@ -134,30 +152,10 @@ LockAccessory.prototype.setState = function(state, callback) {
     }, function(err, response, body) {
 
         if (!err && response.statusCode == 200) {
-            this.log("State change complete.");
-
-            // we succeeded, so update the "current" state as well
-            var currentState = (state == Characteristic.LockTargetState.SECURED) ?
-                Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
-
-            this.lockservice
-                .setCharacteristic(Characteristic.LockCurrentState, currentState);
-
-            var json = JSON.parse(body);
-            var batt = json.battery;
-
-            this.battservice
-                .setCharacteristic(Characteristic.BatteryLevel, batt);
-
+            // this.lockservice
+            //     .setCharacteristic(Characteristic.LockCurrentState, currentState);
+            // this.cachedLockState = true;
             callback(null); // success
-
-            var self = this;
-            setTimeout(function() {
-                if (currentState == Characteristic.LockTargetState.UNSECURED) {
-                    self.lockservice
-                        .setCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED);
-                }
-            }, 5000);
         }
         else {
             this.log("Error '%s' setting lock state. Response: %s", err, body);
