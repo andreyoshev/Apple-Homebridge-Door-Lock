@@ -111,8 +111,7 @@ LockAccessory.prototype.setState = function(state, callback) {
     }, function(err, response, body) {
 
         if (!err && response.statusCode == 200) {
-            // this.lockservice
-            //     .setCharacteristic(Characteristic.LockCurrentState, currentState);
+            this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
             // this.cachedLockState = true;
             callback(null); // success
         }
