@@ -21,7 +21,7 @@ LockAccessory.prototype.setState = function(state, callback) {
 
     this.log("Set state to %s", lockState);
 
-    var currentState = Characteristic.LockTargetState.SECURED
+    var currentState = Characteristic.LockTargetState.UNSECURED
 
     //this is a security latch that can't be unlocked programatically
     if (lockState == "unlock") {
