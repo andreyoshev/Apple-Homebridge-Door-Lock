@@ -37,4 +37,8 @@ LockAccessory.prototype.setState = function(state, callback) {
 //         this.cachedLockState = true;
         callback(null); // success
     }.bind(this));
+},
+    
+LockAccessory.prototype.getServices = function() {
+    return [];
 }
