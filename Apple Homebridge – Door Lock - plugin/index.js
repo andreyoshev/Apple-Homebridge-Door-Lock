@@ -19,32 +19,7 @@ function LockAccessory(log, config) {
 
     this.lockservice = new Service.LockMechanism(this.name);
 
-    this.lockservice
-        .getCharacteristic(Characteristic.LockCurrentState)
-        .on('get', this.getState.bind(this));
-
-    this.lockservice
-        .getCharacteristic(Characteristic.LockTargetState)
-        .on('get', this.getState.bind(this))
-        .on('set', this.setState.bind(this));
-
     this.battservice = new Service.BatteryService(this.name);
-
-    this.battservice
-        .getCharacteristic(Characteristic.BatteryLevel)
-        .on('get', this.getBattery.bind(this));
-
-    this.battservice
-        .getCharacteristic(Characteristic.ChargingState)
-        .on('get', this.getCharging.bind(this));
-
-    this.battservice
-        .getCharacteristic(Characteristic.StatusLowBattery)
-        .on('get', this.getLowBatt.bind(this));
-
-
-    //start the 5 second check loop
-    this.checkState();
 }
 
 LockAccessory.prototype.getState = function(callback) {
@@ -157,5 +132,5 @@ LockAccessory.prototype.setState = function(state, callback) {
 },
 
 LockAccessory.prototype.getServices = function() {
-    return [this.lockservice, this.battservice];
+    return [this.lockservice];
 }
