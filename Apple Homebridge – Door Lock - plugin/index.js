@@ -54,10 +54,8 @@ LockAccessory.prototype.getState = function(callback) {
     }, function(err, response, body) {
 
         if (!err && response.statusCode == 200) {
-            var json = JSON.parse(body);
-            var state = json.state; // "locked" or "unlocked"
-            this.log("Lock state is %s", state);
-            var locked = state == "locked"
+
+            var locked = "unlocked"
                 callback(null, locked); // success
         }
         else {
@@ -90,10 +88,8 @@ LockAccessory.prototype.getBattery = function(callback) {
     }, function(err, response, body) {
 
         if (!err && response.statusCode == 200) {
-            var json = JSON.parse(body);
-            var batt = json.battery;
-            this.log("Lock battery is %s", batt);
-            callback(null, batt); // success
+            
+            callback(null, "100%"); // success
         }
         else {
             this.log("Error getting battery (status code %s): %s", response.statusCode, err);
@@ -115,11 +111,8 @@ LockAccessory.prototype.getLowBatt = function(callback) {
     }, function(err, response, body) {
 
         if (!err && response.statusCode == 200) {
-            var json = JSON.parse(body);
-            var batt = json.battery;
-            this.log("Lock battery is %s", batt);
-            var low = (batt > 20) ? Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL : Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW;
-            callback(null, low); // success
+
+            callback(null, ""); // success
         }
         else {
             var errCode = "NO RESPONSE"
