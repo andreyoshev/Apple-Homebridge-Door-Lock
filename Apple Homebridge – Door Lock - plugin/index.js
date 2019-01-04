@@ -125,11 +125,11 @@ LockAccessory.prototype.getLowBatt = function(callback) {
 
 LockAccessory.prototype.setState = function(state, callback) {
 
-    var lockState = (state == Characteristic.LockTargetState.SECURED) ? "unlock" : "unlock";
+    var lockState = "unlock"
 
     this.log("Set state to %s", lockState);
 
-    var currentState = Characteristic.LockCurrentState.UNSECURED;
+    var currentState = Characteristic.LockCurrentState.SECURED;
 
     //this is a security latch that can't be unlocked programatically
     if (lockState == "unlock") {
