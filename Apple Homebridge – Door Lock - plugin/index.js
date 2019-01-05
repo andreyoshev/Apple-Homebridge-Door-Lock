@@ -58,18 +58,11 @@ LockAccessory.prototype.setState = function(state, callback) {
     this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
     
     request.post({
-        url: "ya.ru"
+        url: this.url
     }, function(err, response, body) {
-        console.log("Open"); 
-        this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
+        this.log("response");
+        callback(null); // success
     }.bind(this));
-    
-    callback(null); // success
-    
-//     currentState = Characteristic.LockCurrentState.SECURED;
-
-//     this.lockservice
-//         .setCharacteristic(Characteristic.LockCurrentState, currentState);
 },
 
 LockAccessory.prototype.getServices = function() {
