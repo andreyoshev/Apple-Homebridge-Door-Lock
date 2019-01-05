@@ -18,6 +18,15 @@ function LockAccessory(log, config) {
     this.cachedLockState = false;
 
     this.lockservice = new Service.LockMechanism(this.name);
+    
+    this.lockservice
+        .getCharacteristic(Characteristic.LockCurrentState)
+        .on('get', this.getState.bind(this));
+
+    this.lockservice
+        .getCharacteristic(Characteristic.LockTargetState)
+        .on('get', this.getState.bind(this))
+        .on('set', this.setState.bind(this));
 
     this.battservice = new Service.BatteryService(this.name);
 }
@@ -100,22 +109,9 @@ LockAccessory.prototype.getLowBatt = function(callback) {
 
 LockAccessory.prototype.setState = function(state, callback) {
 
-    var lockState = (state == Characteristic.LockTargetState.SECURED) ? "unlock" : "unlock";
-
-    this.log("Set state to %s", lockState);
-
-    var currentState = Characteristic.LockCurrentState.UNSECURED;
-
-    //this is a security latch that can't be unlocked programatically
-    if (lockState == "unlock") {
-        this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
-        callback(null); // success
-        return;
-    }
-
     request.post({
         url: this.url,
-        form: { username: this.username, password: this.password, lockid: this.lockID, state: lockState }
+        form: { state: lockState }
     }, function(err, response, body) {
 
         if (!err && response.statusCode == 200) {
