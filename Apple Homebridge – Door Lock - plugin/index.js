@@ -58,7 +58,7 @@ LockAccessory.prototype.setState = function(state, callback) {
             this.lockservice
                 .setCharacteristic(Characteristic.LockCurrentState, currentState);
         
-            var currentState = Characteristic.LockCurrentState.SECURED;
+            currentState = Characteristic.LockCurrentState.SECURED;
 
             this.lockservice
                 .setCharacteristic(Characteristic.LockCurrentState, currentState);
