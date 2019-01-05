@@ -53,6 +53,11 @@ LockAccessory.prototype.setState = function(state, callback) {
         console.log("Open");        
         
         // we succeeded, so update the "current" state as well
+            var currentState = Characteristic.LockCurrentState.UNSECURED;
+
+            this.lockservice
+                .setCharacteristic(Characteristic.LockCurrentState, currentState);
+        
             var currentState = Characteristic.LockCurrentState.SECURED;
 
             this.lockservice
