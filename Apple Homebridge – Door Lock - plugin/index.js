@@ -18,105 +18,19 @@ function LockAccessory(log, config) {
     this.cachedLockState = false;
 
     this.lockservice = new Service.LockMechanism(this.name);
-    
-    this.lockservice
-        .getCharacteristic(Characteristic.LockCurrentState)
-        .on('get', this.getState.bind(this));
-
-    this.lockservice
-        .getCharacteristic(Characteristic.LockTargetState)
-        .on('get', this.getState.bind(this))
-        .on('set', this.setState.bind(this));
 
     this.battservice = new Service.BatteryService(this.name);
 }
 
-LockAccessory.prototype.getState = function(callback) {
-    request.get({
-        url: this.url,
-        qs: { username: this.username, password: this.password, lockid: this.lockID }
-    }, function(err, response, body) {
-
-        if (!err && response.statusCode == 200) {
-
-            var locked = "unlocked"
-                callback(null, locked); // success
-        }
-        else {
-            this.log("Error getting state (status code %s): %s", response.statusCode, err);
-            callback(err);
-        }
-    }.bind(this));
-}
-
-LockAccessory.prototype.checkState = function() {
-    var self = this;
-    this.getState(function(err, state){
-        if (self.cachedLockState !== state) {
-            self.cachedLockState = state;
-            var currentState = (state == true) ? Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED
-            self.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
-            self.lockservice.setCharacteristic(Characteristic.LockTargetState, currentState);
-        }
-
-        setTimeout(self.checkState.bind(self), 8000);
-    })
-}
-
-LockAccessory.prototype.getBattery = function(callback) {
-    this.log("Getting current battery...");
-
-    request.get({
-        url: this.url,
-        qs: { username: this.username, password: this.password, lockid: this.lockID }
-    }, function(err, response, body) {
-
-        if (!err && response.statusCode == 200) {
-            
-            callback(null, "100%"); // success
-        }
-        else {
-            this.log("Error getting battery (status code %s): %s", response.statusCode, err);
-            callback(err);
-        }
-    }.bind(this));
-}
-
-LockAccessory.prototype.getCharging = function(callback) {
-    callback(null, Characteristic.ChargingState.NOT_CHARGING);
-}
-
-LockAccessory.prototype.getLowBatt = function(callback) {
-    this.log("Getting current battery...");
-
-    request.get({
-        url: this.url,
-        qs: { username: this.username, password: this.password, lockid: this.lockID }
-    }, function(err, response, body) {
-
-        if (!err && response.statusCode == 200) {
-
-            callback(null, ""); // success
-        }
-        else {
-            var errCode = "NO RESPONSE"
-            if (response) errCode = response.statusCode
-            this.log("Error getting battery (status code %s): %s", errCode, err);
-            callback(err);
-        }
-    }.bind(this));
-}
-
 LockAccessory.prototype.setState = function(state, callback) {
-
+    
+    this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
+    
     request.post({
-        url: this.url,
-        form: { state: lockState }
+        url: this.url
     }, function(err, response, body) {
-
         if (!err && response.statusCode == 200) {
-            // this.lockservice
-            //     .setCharacteristic(Characteristic.LockCurrentState, currentState);
+            this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
             // this.cachedLockState = true;
             callback(null); // success
         }
