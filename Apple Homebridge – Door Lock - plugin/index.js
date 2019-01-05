@@ -59,15 +59,9 @@ LockAccessory.prototype.setState = function(state, callback) {
     request.post({
         url: this.url
     }, function(err, response, body) {
-        if (!err && response.statusCode == 200) {
             this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
-            // this.cachedLockState = true;
+            this.cachedLockState = true;
             callback(null); // success
-        }
-        else {
-            this.log("Error '%s' setting lock state. Response: %s", err, body);
-            callback(err || new Error("Error setting lock state."));
-        }
     }.bind(this));
 },
 
