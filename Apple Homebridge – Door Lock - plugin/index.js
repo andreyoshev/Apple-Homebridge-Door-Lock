@@ -53,18 +53,18 @@ LockAccessory.prototype.setState = function(state, callback) {
     this.log("Set state to %s", lockState);
 
     var currentState = (state == Characteristic.LockTargetState.SECURED) ?
-        Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.SECURED;
+        Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
 
     this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
-    callback(null); // success
-    return;
     
-//     request.post({
-//         url: this.url
-//     }, function(err, response, body) {
-//         console.log("Open"); 
-//         callback(null); // success
-//     }.bind(this));
+    request.post({
+        url: this.url
+    }, function(err, response, body) {
+        console.log("Open"); 
+        this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
+    }.bind(this));
+    
+    callback(null); // success
     
 //     currentState = Characteristic.LockCurrentState.SECURED;
 
