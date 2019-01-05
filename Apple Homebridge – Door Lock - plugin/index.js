@@ -57,12 +57,12 @@ LockAccessory.prototype.setState = function(state, callback) {
 
     this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
     
-    request.post({
-        url: this.url
-    }, function(err, response, body) {
-        this.log("response");
-        callback(null); // success
-    }.bind(this));
+//     request.post({
+//         url: this.url
+//     }, function(err, response, body) {
+//         this.log("response");
+//         callback(null); // success
+//     }.bind(this));
 },
 
 LockAccessory.prototype.getServices = function() {
