@@ -35,7 +35,7 @@ function LockAccessory(log, config) {
 }
 
 LockAccessory.prototype.getState = function(callback) {
-    callback(null, true);
+    callback(null, false);
 }
 
 LockAccessory.prototype.checkState = function() {
