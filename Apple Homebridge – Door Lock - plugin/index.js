@@ -20,6 +20,27 @@ function LockAccessory(log, config) {
     this.lockservice = new Service.LockMechanism(this.name);
 
     this.battservice = new Service.BatteryService(this.name);
+    
+    //start the 5 second check loop
+    this.checkState();
+}
+
+LockAccessory.prototype.getState = function(callback) {
+    callback(null, true);
+}
+
+LockAccessory.prototype.checkState = function() {
+    var self = this;
+    this.getState(function(err, state){
+        if (self.cachedLockState !== state) {
+            self.cachedLockState = state;
+            var currentState = Characteristic.LockCurrentState.SECURED
+            self.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
+            self.lockservice.setCharacteristic(Characteristic.LockTargetState, currentState);
+        }
+
+        setTimeout(self.checkState.bind(self), 8000);
+    })
 }
 
 LockAccessory.prototype.setState = function(state, callback) {
