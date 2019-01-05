@@ -55,19 +55,16 @@ LockAccessory.prototype.setState = function(state, callback) {
     var currentState = (state == Characteristic.LockTargetState.SECURED) ?
         Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
 
-    //this is a security latch that can't be unlocked programatically
-    if (lockState == "unlock") {
-        this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
-        callback(null); // success
-        return;
-    }
+    this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
+    callback(null); // success
+    return;
     
-    request.post({
-        url: this.url
-    }, function(err, response, body) {
-        console.log("Open"); 
-        callback(null); // success
-    }.bind(this));
+//     request.post({
+//         url: this.url
+//     }, function(err, response, body) {
+//         console.log("Open"); 
+//         callback(null); // success
+//     }.bind(this));
     
 //     currentState = Characteristic.LockCurrentState.SECURED;
 
