@@ -30,8 +30,8 @@ function LockAccessory(log, config) {
     
     this.battservice = new Service.BatteryService(this.name);
     
-    //start the 5 second check loop
-    this.checkState();
+//     //start the 5 second check loop
+//     this.checkState();
 }
 
 LockAccessory.prototype.getState = function(callback) {
