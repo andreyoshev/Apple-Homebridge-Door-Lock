@@ -60,7 +60,7 @@ LockAccessory.prototype.setState = function(state, callback) {
         url: this.url
     }, function(err, response, body) {
             this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
-            this.cachedLockState = true;
+            this.cachedLockState = false;
             callback(null); // success
     }.bind(this));
 },
