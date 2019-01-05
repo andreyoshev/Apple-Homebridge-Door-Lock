@@ -19,6 +19,15 @@ function LockAccessory(log, config) {
 
     this.lockservice = new Service.LockMechanism(this.name);
 
+    this.lockservice
+    .getCharacteristic(Characteristic.LockCurrentState)
+    .on('get', this.getState.bind(this));
+
+    this.lockservice
+    .getCharacteristic(Characteristic.LockTargetState)
+    .on('get', this.getState.bind(this))
+    .on('set', this.setState.bind(this));
+    
     this.battservice = new Service.BatteryService(this.name);
     
     //start the 5 second check loop
