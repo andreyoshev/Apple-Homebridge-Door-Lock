@@ -46,24 +46,19 @@ LockAccessory.prototype.checkState = function() {
     self.lockservice.setCharacteristic(Characteristic.LockTargetState, currentState);
 }
 
-LockAccessory.prototype.setState = function(state, callback) {
-    
-    this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
-    
+LockAccessory.prototype.setState = function(state, callback) {    
     request.post({
         url: this.url
     }, function(err, response, body) {
-            console.log("Open");
+        console.log("Open");        
         
-            var temoState = Characteristic.LockCurrentState.UNSECURED
-            this.lockservice.setCharacteristic(Characteristic.LockCurrentState, temoState);
-            this.lockservice.setCharacteristic(Characteristic.LockTargetState, temoState);   
+        // we succeeded, so update the "current" state as well
+            var currentState = Characteristic.LockCurrentState.SECURED;
+
+            this.lockservice
+                .setCharacteristic(Characteristic.LockCurrentState, currentState);
         
-            var currentState = Characteristic.LockCurrentState.SECURED
-            this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
-            this.lockservice.setCharacteristic(Characteristic.LockTargetState, currentState);  
-        
-            callback(null); // success
+        callback(null); // success
     }.bind(this));
 },
 
