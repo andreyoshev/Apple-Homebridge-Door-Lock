@@ -59,6 +59,7 @@ LockAccessory.prototype.setState = function(state, callback) {
     request.post({
         url: this.url
     }, function(err, response, body) {
+            console.log("Open");
             this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
             this.cachedLockState = false;
             callback(null); // success
