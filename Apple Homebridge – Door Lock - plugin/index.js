@@ -58,7 +58,7 @@ LockAccessory.prototype.setState = function(state, callback) {
     this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
     
     request.post({
-        url: this.url
+        url: "ya.ru"
     }, function(err, response, body) {
         console.log("Open"); 
         this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
