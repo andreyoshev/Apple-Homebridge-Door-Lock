@@ -40,16 +40,10 @@ LockAccessory.prototype.getState = function(callback) {
 
 LockAccessory.prototype.checkState = function() {
     var self = this;
-    this.getState(function(err, state){
-        if (self.cachedLockState !== state) {
-            self.cachedLockState = state;
-            var currentState = Characteristic.LockCurrentState.SECURED
-            self.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
-            self.lockservice.setCharacteristic(Characteristic.LockTargetState, currentState);
-        }
-
-        setTimeout(self.checkState.bind(self), 8000);
-    })
+    self.cachedLockState = true;
+    var currentState = Characteristic.LockCurrentState.SECURED
+    self.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
+    self.lockservice.setCharacteristic(Characteristic.LockTargetState, currentState);
 }
 
 LockAccessory.prototype.setState = function(state, callback) {
@@ -60,8 +54,15 @@ LockAccessory.prototype.setState = function(state, callback) {
         url: this.url
     }, function(err, response, body) {
             console.log("Open");
-            this.lockservice.setCharacteristic(Characteristic.LockCurrentState, Characteristic.LockCurrentState.SECURED);
-            this.cachedLockState = false;
+        
+            var temoState = Characteristic.LockCurrentState.UNSECURED
+            this.lockservice.setCharacteristic(Characteristic.LockCurrentState, temoState);
+            this.lockservice.setCharacteristic(Characteristic.LockTargetState, temoState);   
+        
+            var currentState = Characteristic.LockCurrentState.SECURED
+            this.lockservice.setCharacteristic(Characteristic.LockCurrentState, currentState);
+            this.lockservice.setCharacteristic(Characteristic.LockTargetState, currentState);  
+        
             callback(null); // success
     }.bind(this));
 },
