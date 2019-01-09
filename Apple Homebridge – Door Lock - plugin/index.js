@@ -15,7 +15,7 @@ function LockAccessory(log, config) {
     this.lockID = config["lock-id"];
     this.username = config["username"];
     this.password = config["password"];
-    this.cachedLockState = false;
+    this.cachedLockState = true;
 
     this.lockservice = new Service.LockMechanism(this.name);
 
@@ -35,7 +35,7 @@ function LockAccessory(log, config) {
 }
 
 LockAccessory.prototype.getState = function(callback) {
-    callback(null, false);
+    callback(null, true);
 }
 
 LockAccessory.prototype.checkState = function() {
