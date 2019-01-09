@@ -1,6 +1,6 @@
 {
     "name": "homebridge-doorlock-nojson",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "description": "Homebridge – HTTP Door Lock",
     "author": {
         "name": "Andrey Oshev"
